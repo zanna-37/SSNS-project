@@ -14,7 +14,7 @@
 #define PIN_ECHO 11
 
 #define SLEEP_MS 4000
-#define ID_ENDPOINT 8
+#define ID_ENDPOINT 8 // CHANGE FOR EVERY DEVICE
 
 Sleep sleep;
 LightManager lightManager(PIN_LIGHT);
@@ -53,7 +53,7 @@ void loop() {
   }
 
   #ifdef DEBUG
-    Serial.println();
+    Serial.println("[.] Zzz");
   #endif
 
   Serial.flush();
