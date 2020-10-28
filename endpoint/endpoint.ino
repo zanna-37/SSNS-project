@@ -39,6 +39,9 @@ void setup() {
     Serial.println("PIN_ECHO       : " + String(PIN_ECHO));
     Serial.println("--------------");
 #endif
+
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop() {
@@ -65,8 +68,12 @@ unsigned long getElapsedRealTime() {
 }
 
 void ArduinoSleep(int mills) {
+    digitalWrite(LED_BUILTIN, LOW);
+
     sleep.pwrDownMode();
     sleep.sleepDelay(mills);
+    
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 
