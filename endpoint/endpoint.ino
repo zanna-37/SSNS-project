@@ -5,9 +5,10 @@
 #define DEBUG //comment: off | uncomment: on
 #define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
+#define PIN_SLEEP_XBEE 9
 #define PIN_LIGHT A5
-#define PIN_TRIG 9
-#define PIN_ECHO 10
+#define PIN_TRIG 10
+#define PIN_ECHO 11
 
 #define THRESHOLD_LIGHT 500 //0-1024
 #define THRESHOLD_DIFF_DISTANCE 1
@@ -33,13 +34,15 @@ void setup() {
     Serial.println("#  STARTING  #");
     Serial.println("##############");
     Serial.println();
-    Serial.print  ("TYPE      : ENDPOINT "); Serial.println(ID_ENDPOINT);
-    Serial.println("PIN_LIGHT : " + String(PIN_LIGHT));
-    Serial.println("PIN_TRIG  : " + String(PIN_TRIG));
-    Serial.println("PIN_ECHO  : " + String(PIN_ECHO));
+    Serial.print  ("TYPE           : ENDPOINT "); Serial.println(ID_ENDPOINT);
+    Serial.println("PIN_SLEEP_XBEE : " + String(PIN_SLEEP_XBEE));
+    Serial.println("PIN_LIGHT      : " + String(PIN_LIGHT));
+    Serial.println("PIN_TRIG       : " + String(PIN_TRIG));
+    Serial.println("PIN_ECHO       : " + String(PIN_ECHO));
     Serial.println("--------------");
   #endif
 
+    pinMode(PIN_SLEEP_XBEE, OUTPUT);
     pinMode(PIN_LIGHT, INPUT);
     pinMode(PIN_TRIG, OUTPUT);
     pinMode(PIN_ECHO, INPUT);
@@ -53,23 +56,16 @@ void loop() {
     sendData(ID_ENDPOINT, light, distance);
   }
   if( isKeepAliveNeeded() ) {
-    sendKeepAlive(ID_ENDPOINT);
+    sendData(ID_ENDPOINT, light, distance);
   }
 
   #ifdef DEBUG
     Serial.println();
   #endif
 
-  XBee.flush();
   Serial.flush();
-  sleep.pwrDownMode();
-  sleep.sleepDelay(SLEEP_MS);
 
-  #ifdef DEBUG
-    Serial.println("Woken up");
-  #endif
-  
-  //delay(SLEEP_MS);
+  performSleep();
 }
 
 bool getLight() {
@@ -120,28 +116,21 @@ int getProximity() {
 }
 
 void sendData(int ID, bool light, int distance) {
+  WakeXBee();
   #ifdef DEBUG
     Serial.println("[.] Sending data...");
   #endif
   
-  XBee.print("{ID:");
+  XBee.print("{");
   XBee.print(ID);  
-  XBee.print("L:");
+  XBee.print(",");
   XBee.print(light);  
-  XBee.print("P:");
+  XBee.print(",");
   XBee.print(distance);
   XBee.println("}");
-}
 
-void sendKeepAlive(int ID) {
-  #ifdef DEBUG
-    Serial.println("[.] Sending KeepAlive...");
-  #endif
-  
-  XBee.print("{ID:");
-  XBee.print(ID);  
-  XBee.print("KEEPALIVE");
-  XBee.println("}");
+  XBee.flush();
+  SleepXBee();
 }
 
 bool isTransmissionNeeded(bool light, int distance) {
@@ -206,3 +195,19 @@ bool isKeepAliveNeeded() {
 unsigned long getElapsedTime() {
   return sleep.WDTMillis();
 }
+
+void performSleep() {
+  sleep.pwrDownMode();
+  sleep.sleepDelay(SLEEP_MS);
+}
+
+
+void WakeXBee() {
+  digitalWrite(PIN_SLEEP_XBEE, LOW);
+  delay(100); //wait for the XBee to wake up
+}
+
+void SleepXBee() {
+  digitalWrite(PIN_SLEEP_XBEE, HIGH);
+}
+  

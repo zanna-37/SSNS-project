@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-#define DEBUG //comment: off | uncomment: on
+//#define DEBUG //comment: off | uncomment: on
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
 #define SLEEP_MS 10
@@ -20,6 +20,8 @@ void setup() {
     Serial.println("TYPE: COORDINATOR");
     Serial.println("--------------");
   #endif
+
+  Serial.println("{Arduino is ready}");
 }
 
 void loop() {
