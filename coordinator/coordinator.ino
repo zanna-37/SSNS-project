@@ -8,7 +8,7 @@
 SoftwareSerial XBee(2, 3); // RX, TX
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(9600, SERIAL_8E1);
   XBee.begin(9600);
       
   #ifdef DEBUG
