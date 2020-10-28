@@ -54,7 +54,7 @@ void loop() {
 
     bool sendData = false;
 
-    if (dataMngr.isTransmissionNeeded(light, distance, nowTimestamp)) {
+    if (dataMngr.addIntermediateAndCheckTransmissionNeeded(light, distance, nowTimestamp)) {
         sendData = true;
     }
     if (commMngr.isKeepAliveNeeded(nowTimestamp)) {
@@ -62,7 +62,7 @@ void loop() {
     }
 
     if (sendData) {
-        dataMngr.updateData(light, distance, nowTimestamp);
+        dataMngr.resetIntemediateData(light, distance, nowTimestamp);
         commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
     }
 
