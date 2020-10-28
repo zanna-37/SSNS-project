@@ -6,30 +6,30 @@
 
 #define THRESHOLD_LIGHT 500 //0-1024
 
-LightManager::LightManager(int PIN){
-	PIN_LIGHT = PIN;
-	pinMode(PIN_LIGHT, INPUT);
+LightManager::LightManager(int PIN) {
+    PIN_LIGHT = PIN;
+    pinMode(PIN_LIGHT, INPUT);
 }
 
 bool LightManager::getLight() {
-  int lightValueAnalog = analogRead(PIN_LIGHT); //HIGHER: darker | LOWER: brighter
+    int lightValueAnalog = analogRead(PIN_LIGHT); //HIGHER: darker | LOWER: brighter
 
-  #ifdef DEBUG
-  #ifdef VERBOSE
+#ifdef DEBUG
+#ifdef VERBOSE
     Serial.print("[.] Light: ");
     if (isBright(lightValueAnalog)) {
-      Serial.print("BRIGHT (");
+        Serial.print("BRIGHT (");
     } else {
-      Serial.print("DARK (");
+        Serial.print("DARK (");
     }
-    Serial.print( lightValueAnalog );
+    Serial.print(lightValueAnalog);
     Serial.println(")");
-  #endif
-  #endif
+#endif
+#endif
 
-  return isBright(lightValueAnalog);
+    return isBright(lightValueAnalog);
 }
 
 bool LightManager::isBright(int lightValueAnalog) {
-  return lightValueAnalog < THRESHOLD_LIGHT;
+    return lightValueAnalog < THRESHOLD_LIGHT;
 }

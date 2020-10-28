@@ -22,15 +22,15 @@ ProximityManager proximityManager(PIN_TRIG, PIN_ECHO);
 CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE);
 
 void setup() {
-  Serial.begin(9600);
-    
-  #ifdef DEBUG
+    Serial.begin(9600);
+
+#ifdef DEBUG
     Serial.println();
     Serial.println("##############");
     Serial.println("#  STARTING  #");
     Serial.println("##############");
     Serial.println();
-    Serial.print  ("TYPE           : ENDPOINT "); Serial.println(ID_ENDPOINT);
+    Serial.print("TYPE           : ENDPOINT "); Serial.println(ID_ENDPOINT);
     Serial.println("PIN_RX_XBEE    : " + String(PIN_RX_XBEE));
     Serial.println("PIN_TX_XBEE    : " + String(PIN_TX_XBEE));
     Serial.println("PIN_SLEEP_XBEE : " + String(PIN_SLEEP_XBEE));
@@ -38,37 +38,37 @@ void setup() {
     Serial.println("PIN_TRIG       : " + String(PIN_TRIG));
     Serial.println("PIN_ECHO       : " + String(PIN_ECHO));
     Serial.println("--------------");
-  #endif
+#endif
 }
 
 void loop() {
-  bool light = lightManager.getLight();
-  int distance = proximityManager.getProximity();
-  unsigned long nowTimestamp = getElapsedRealTime();
+    bool light = lightManager.getLight();
+    int distance = proximityManager.getProximity();
+    unsigned long nowTimestamp = getElapsedRealTime();
 
-  if( commMngr.isTransmissionNeeded(light, distance) ) {
-    commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
-  } else if( commMngr.isKeepAliveNeeded(nowTimestamp) ) {
-    commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
-  }
+    if (commMngr.isTransmissionNeeded(light, distance)) {
+        commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
+    } else if (commMngr.isKeepAliveNeeded(nowTimestamp)) {
+        commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
+    }
 
-  #ifdef DEBUG
+#ifdef DEBUG
     Serial.println("[.] Zzz");
-  #endif
+#endif
 
-  Serial.flush();
-  ArduinoSleep(SLEEP_MS);
+    Serial.flush();
+    ArduinoSleep(SLEEP_MS);
 }
 
 unsigned long getElapsedRealTime() {
-  return sleep.WDTMillis();
+    return sleep.WDTMillis();
 }
 
 void ArduinoSleep(int mills) {
-  sleep.pwrDownMode();
-  sleep.sleepDelay(mills);
+    sleep.pwrDownMode();
+    sleep.sleepDelay(mills);
 }
 
 
 
-  
+

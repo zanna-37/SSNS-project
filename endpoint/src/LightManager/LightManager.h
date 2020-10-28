@@ -4,12 +4,12 @@
 #include "Arduino.h"
 
 class LightManager {
-	public:
-		LightManager(int PIN);
-		bool getLight();
-	private:
-		bool isBright(int lightValueAnalog);
-		int PIN_LIGHT;
+public:
+    LightManager(int PIN);
+    bool getLight();
+private:
+    bool isBright(int lightValueAnalog);
+    int PIN_LIGHT;
 };
 
 #endif

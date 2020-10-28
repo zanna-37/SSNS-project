@@ -4,12 +4,12 @@
 #include "Arduino.h"
 
 class ProximityManager {
-	public:
-		ProximityManager(int PIN_TRIG, int PIN_ECHO);
-		int getProximity();
-	private:
-		int PIN_TRIG;
-		int PIN_ECHO;
+public:
+    ProximityManager(int PIN_TRIG, int PIN_ECHO);
+    int getProximity();
+private:
+    int PIN_TRIG;
+    int PIN_ECHO;
 };
 
 #endif
