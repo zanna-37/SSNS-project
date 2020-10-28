@@ -6,45 +6,15 @@
 #define DEBUG //comment: off | uncomment: on
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
-#define TIMEOUT_KEEPALIVE_MS 10000
-#define THRESHOLD_DIFF_DISTANCE 1
-
-CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int PIN_SLEEP_XBEE) {
+CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int PIN_SLEEP_XBEE, unsigned long KEEPALIVE_THREASHOLD_MS) {
     CommunicationManager::PIN_SLEEP_XBEE = PIN_SLEEP_XBEE;
+    CommunicationManager::KEEPALIVE_THREASHOLD_MS = KEEPALIVE_THREASHOLD_MS;
+    lastSend = 0;
 
     xBee = new SoftwareSerial(PIN_RX_XBEE, PIN_TX_XBEE); // RX, TX
     xBee->begin(9600);
 
     pinMode(PIN_SLEEP_XBEE, OUTPUT);
-}
-
-bool CommunicationManager::isTransmissionNeeded(bool light, int distance) {
-    bool isNeeded = false;
-    if (lastLight == -1 || light != lastLight) {
-#ifdef DEBUG
-        Serial.print("[.] Change in light: ");
-        Serial.print(lastLight);
-        Serial.print("-->");
-        Serial.println(light);
-#endif
-
-        lastLight = light;
-        isNeeded = true;
-    }
-
-    if (lastDistance == -1 || abs(distance - lastDistance) > THRESHOLD_DIFF_DISTANCE) {
-#ifdef DEBUG
-        Serial.print("[.] Change in proximity: ");
-        Serial.print(lastDistance);
-        Serial.print("-->");
-        Serial.println(distance);
-#endif
-
-        lastDistance = distance;
-        isNeeded = true;
-    }
-
-    return isNeeded;
 }
 
 bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
@@ -62,7 +32,7 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
 #endif
 #endif
 
-    if (lastSend == 0 || abs(nowTimestamp - lastSend) > TIMEOUT_KEEPALIVE_MS) {
+    if (lastSend == 0 || abs(nowTimestamp - lastSend) > KEEPALIVE_THREASHOLD_MS) {
 #ifdef DEBUG
         Serial.print("[.] KeepAlive needed ");
         Serial.print(" (diff ");

@@ -2,6 +2,7 @@
 #include "src/LightManager/LightManager.h"
 #include "src/ProximityManager/ProximityManager.h"
 #include "src/CommunicationManager/CommunicationManager.h"
+#include "src/DataManager/DataManager.h"
 
 #define DEBUG //comment: off | uncomment: on
 #define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
@@ -14,12 +15,14 @@
 #define PIN_ECHO 11
 
 #define SLEEP_MS 4000
+#define KEEPALIVE_THREASHOLD_MS 10000
 #define ID_ENDPOINT 8 // CHANGE FOR EVERY DEVICE
 
 Sleep sleep;
-LightManager lightManager(PIN_LIGHT);
-ProximityManager proximityManager(PIN_TRIG, PIN_ECHO);
-CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE);
+LightManager lightMngr(PIN_LIGHT);
+ProximityManager proximityMngr(PIN_TRIG, PIN_ECHO);
+CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE, KEEPALIVE_THREASHOLD_MS);
+DataManager dataMngr;
 
 void setup() {
     Serial.begin(9600);
@@ -45,13 +48,21 @@ void setup() {
 }
 
 void loop() {
-    bool light = lightManager.getLight();
-    int distance = proximityManager.getProximity();
+    bool light = lightMngr.getLight();
+    int distance = proximityMngr.getProximity();
     unsigned long nowTimestamp = getElapsedRealTime();
 
-    if (commMngr.isTransmissionNeeded(light, distance)) {
-        commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
-    } else if (commMngr.isKeepAliveNeeded(nowTimestamp)) {
+    bool sendData = false;
+
+    if (dataMngr.isTransmissionNeeded(light, distance, nowTimestamp)) {
+        sendData = true;
+    }
+    if (commMngr.isKeepAliveNeeded(nowTimestamp)) {
+        sendData = true;
+    }
+
+    if (sendData) {
+        dataMngr.updateData(light, distance, nowTimestamp);
         commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
     }
 
@@ -72,7 +83,7 @@ void ArduinoSleep(int mills) {
 
     sleep.pwrDownMode();
     sleep.sleepDelay(mills);
-    
+
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
