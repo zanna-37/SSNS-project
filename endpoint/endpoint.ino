@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-#include <Sleep_n0m1_custom.h> //See ../libraries/Sleep_n0m1_custom/README.md
+#include "src/Sleep_n0m1_custom/Sleep_n0m1_custom.h" //See ../libraries/Sleep_n0m1_custom/README.md
 #include <Math.h>
 
 #define DEBUG //comment: off | uncomment: on
