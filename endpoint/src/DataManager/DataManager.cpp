@@ -4,7 +4,7 @@
 #define DEBUG //comment: off | uncomment: on
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
-#define THRESHOLD_DIFF_DISTANCE 2
+#define TOLERANCE_DIFF_DISTANCE 2
 
 DataManager::DataManager(unsigned long SHORT_SLEEP, unsigned long DEFER_UNSTABLE_CHANGES_FOR_MS, unsigned long LONG_SLEEP) {
     DataManager::SHORT_SLEEP = SHORT_SLEEP;
@@ -35,7 +35,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
         hasChanged = true;
     }
 
-    if (lastDistance == -1 || abs(distance - lastDistance) > THRESHOLD_DIFF_DISTANCE) {
+    if (lastDistance == -1 || abs(distance - lastDistance) > TOLERANCE_DIFF_DISTANCE) {
 #ifdef DEBUG
         Serial.print("[.] Change in proximity: ");
         Serial.print(lastDistance);
@@ -48,7 +48,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
 
     if (wasTransmissionDeferred()) {
         if (abs(nowTimestamp - firstChange) > DEFER_UNSTABLE_CHANGES_FOR_MS) {
-            //transmit if deferred data timed out
+            //transmit if deferred-data timed out
 #ifdef DEBUG
             Serial.print("[.] Defer timeout");
 #endif
