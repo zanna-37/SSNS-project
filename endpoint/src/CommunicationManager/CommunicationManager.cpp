@@ -27,7 +27,7 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
     Serial.print("-->");
     Serial.print(nowTimestamp);
     Serial.print(" (diff ");
-    Serial.print(abs(nowTimestamp - lastSend));
+    Serial.print(getTimestampDiff(nowTimestamp, lastSend));
     Serial.println(")");
     #endif
     #endif
@@ -36,7 +36,7 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
         #ifdef DEBUG
         Serial.print("[.] KeepAlive needed ");
         Serial.print(" (diff ");
-        Serial.print(abs(nowTimestamp - lastSend));
+        Serial.print(getTimestampDiff(nowTimestamp, lastSend));
         Serial.println(")");
         #endif
 
@@ -69,7 +69,7 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
 unsigned long CommunicationManager::getMinDelayBeforeAction(unsigned long nowTimestamp) {
     return max(
         0,
-        (long)KEEPALIVE_THREASHOLD_MS - (long)getTimestampDiff(nowTimestamp, lastSend)
+        (long)KEEPALIVE_THREASHOLD_MS - (long)getTimestampDiff(nowTimestamp, lastSend) //cast to long to avoid underflow
     );
 }
 
