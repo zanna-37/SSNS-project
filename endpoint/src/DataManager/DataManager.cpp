@@ -32,6 +32,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
         Serial.println(light);
 #endif
 
+        lastLight = light;
         hasChanged = true;
     }
 
@@ -43,6 +44,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
         Serial.println(distance);
 #endif
 
+        lastDistance = distance;
         hasChanged = true;
     }
 
