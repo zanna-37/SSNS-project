@@ -66,7 +66,7 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     lastSend = nowTimestamp;
 }
 
-unsigned long CommunicationManager::getMinDelayBeforAction(unsigned long nowTimestamp) {
+unsigned long CommunicationManager::getMinDelayBeforeAction(unsigned long nowTimestamp) {
     return max(
         0,
         (long)KEEPALIVE_THREASHOLD_MS - (long)getTimestampDiff(nowTimestamp, lastSend)

@@ -77,7 +77,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
     }
 }
 
-unsigned long DataManager::getMinDelayBeforAction(unsigned long nowTimestamp) {
+unsigned long DataManager::getMinDelayBeforeAction(unsigned long nowTimestamp) {
     if (wasTransmissionDeferred()) {
         return SHORT_SLEEP;
     } else {

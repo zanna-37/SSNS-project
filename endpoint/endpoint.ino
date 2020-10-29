@@ -80,8 +80,8 @@ void loop() {
     }
 
     nowTimestamp = getElapsedRealTime();
-    unsigned long sleep_comm = commMngr.getMinDelayBeforAction(nowTimestamp);
-    unsigned long sleep_data = dataMngr.getMinDelayBeforAction(nowTimestamp);
+    unsigned long sleep_comm = commMngr.getMinDelayBeforeAction(nowTimestamp);
+    unsigned long sleep_data = dataMngr.getMinDelayBeforeAction(nowTimestamp);
     unsigned long sleep_time = min(sleep_comm, sleep_data);
 
     #ifdef DEBUG

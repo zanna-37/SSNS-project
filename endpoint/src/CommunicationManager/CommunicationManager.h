@@ -10,7 +10,7 @@ public:
 
     bool isKeepAliveNeeded(unsigned long nowTimestamp);
     void sendData(int ID, bool light, int distance, unsigned long nowTimestamp);
-    unsigned long getMinDelayBeforAction(unsigned long nowTimestamp);
+    unsigned long getMinDelayBeforeAction(unsigned long nowTimestamp);
 
 private:
     SoftwareSerial* xBee;
