@@ -14,7 +14,6 @@
 #define PIN_TRIG 10
 #define PIN_ECHO 11
 
-#define SLEEP_MS 4000
 #define KEEPALIVE_THREASHOLD_MS 10000
 #define ID_ENDPOINT 8 // CHANGE FOR EVERY DEVICE
 
@@ -65,13 +64,29 @@ void loop() {
         dataMngr.resetIntemediateData(light, distance, nowTimestamp);
         commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
     }
+    
+    nowTimestamp = getElapsedRealTime();
+    unsigned long sleep_comm = commMngr.getMinDelayBeforAction(nowTimestamp);
+    unsigned long sleep_data = dataMngr.getMinDelayBeforAction(nowTimestamp);
+    unsigned long sleep_time =  min(sleep_comm,sleep_data);
 
 #ifdef DEBUG
-    Serial.println("[.] Zzz");
+#ifdef VERBOSE
+    Serial.print("[.] sleep_comm: ");
+    Serial.println(sleep_comm);
+    Serial.print("[.] sleep_data: ");
+    Serial.println(sleep_data);
+#endif
+#endif
+
+#ifdef DEBUG
+    Serial.print("[.] Zzz (");
+    Serial.println(sleep_time);
+    Serial.println(" ms)");
 #endif
 
     Serial.flush();
-    ArduinoSleep(SLEEP_MS);
+    ArduinoSleep(sleep_time);
 }
 
 unsigned long getElapsedRealTime() {

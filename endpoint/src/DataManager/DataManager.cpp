@@ -5,7 +5,9 @@
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
 #define THRESHOLD_DIFF_DISTANCE 2
-#define DEFER_UNSTABLE_CHANGES_FOR_MS 5000 //TODO make parameter
+#define SHORT_SLEEP 2000 //TODO make parameter //PRODUCTION: 10000
+#define DEFER_UNSTABLE_CHANGES_FOR_MS 10000 //TODO make parameter //PRODUCTION: 30000
+#define LONG_SLEEP 15000 //TODO make parameter //PRODUCTION: 60000
 
 DataManager::DataManager() {
     lastLight = -1;
@@ -70,6 +72,14 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
             deferTransmission(nowTimestamp);
         }
         return false;
+    }
+}
+
+unsigned long DataManager::getMinDelayBeforAction(unsigned long nowTimestamp) {
+    if (wasTransmissionDeferred()) {
+        return SHORT_SLEEP;
+    } else {
+        return LONG_SLEEP;
     }
 }
 

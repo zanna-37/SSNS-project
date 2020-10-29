@@ -8,6 +8,7 @@ public:
     DataManager();
     void resetIntemediateData(bool light, int distance, unsigned long nowTimestamp);
     bool addIntermediateAndCheckTransmissionNeeded(bool light, int distance, unsigned long nowTimestamp);
+    unsigned long getMinDelayBeforAction(unsigned long nowTimestamp);
 private:
     int lastLight;
     int lastDistance;

@@ -32,7 +32,7 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
 #endif
 #endif
 
-    if (lastSend == 0 || abs(nowTimestamp - lastSend) > KEEPALIVE_THREASHOLD_MS) {
+    if (lastSend == 0 || getTimestampDiff(nowTimestamp, lastSend) > KEEPALIVE_THREASHOLD_MS) {
 #ifdef DEBUG
         Serial.print("[.] KeepAlive needed ");
         Serial.print(" (diff ");
@@ -66,6 +66,13 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     lastSend = nowTimestamp;
 }
 
+unsigned long CommunicationManager::getMinDelayBeforAction(unsigned long nowTimestamp) {
+    return max(
+        0,
+        (long)KEEPALIVE_THREASHOLD_MS - (long)getTimestampDiff(nowTimestamp, lastSend)
+    );
+}
+
 void CommunicationManager::WakeXBee() {
     digitalWrite(PIN_SLEEP_XBEE, LOW);
     delay(100); //wait for the XBee to wake up
@@ -73,4 +80,8 @@ void CommunicationManager::WakeXBee() {
 
 void CommunicationManager::SleepXBee() {
     digitalWrite(PIN_SLEEP_XBEE, HIGH);
+}
+
+unsigned long CommunicationManager::getTimestampDiff(unsigned long start, unsigned long end) {
+    return start - end;
 }
