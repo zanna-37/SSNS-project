@@ -14,8 +14,8 @@ LightManager::LightManager(int PIN) {
 bool LightManager::getLight() {
     int lightValueAnalog = analogRead(PIN_LIGHT); //HIGHER: darker | LOWER: brighter
 
-#ifdef DEBUG
-#ifdef VERBOSE
+    #ifdef DEBUG
+    #ifdef VERBOSE
     Serial.print("[.] Light: ");
     if (isBright(lightValueAnalog)) {
         Serial.print("BRIGHT (");
@@ -24,8 +24,8 @@ bool LightManager::getLight() {
     }
     Serial.print(lightValueAnalog);
     Serial.println(")");
-#endif
-#endif
+    #endif
+    #endif
 
     return isBright(lightValueAnalog);
 }

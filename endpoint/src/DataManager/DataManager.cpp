@@ -25,24 +25,24 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
     bool hasChanged = false;
 
     if (lastLight == -1 || light != lastLight) {
-#ifdef DEBUG
+        #ifdef DEBUG
         Serial.print("[.] Change in light: ");
         Serial.print(lastLight);
         Serial.print("-->");
         Serial.println(light);
-#endif
+        #endif
 
         lastLight = light;
         hasChanged = true;
     }
 
     if (lastDistance == -1 || abs(distance - lastDistance) > TOLERANCE_DIFF_DISTANCE) {
-#ifdef DEBUG
+        #ifdef DEBUG
         Serial.print("[.] Change in proximity: ");
         Serial.print(lastDistance);
         Serial.print("-->");
         Serial.println(distance);
-#endif
+        #endif
 
         lastDistance = distance;
         hasChanged = true;
@@ -51,26 +51,26 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
     if (wasTransmissionDeferred()) {
         if (abs(nowTimestamp - firstChange) > DEFER_UNSTABLE_CHANGES_FOR_MS) {
             //transmit if deferred-data timed out
-#ifdef DEBUG
+            #ifdef DEBUG
             Serial.print("[.] Defer timeout");
-#endif
+            #endif
             return true;
         } else {
             //transmit if the deferred data become stable
-#ifdef DEBUG
+            #ifdef DEBUG
             if (hasChanged) {
                 Serial.print("[.] Unstable change");
             } else {
                 Serial.print("[.] Stable change");
             }
-#endif
+            #endif
             return !hasChanged;
         }
     } else {
         if (hasChanged) {
-#ifdef DEBUG
+            #ifdef DEBUG
             Serial.print("[.] Defer transmission");
-#endif
+            #endif
             deferTransmission(nowTimestamp);
         }
         return false;

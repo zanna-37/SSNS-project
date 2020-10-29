@@ -27,12 +27,12 @@ int ProximityManager::getProximity() {
     duration = pulseIn(PIN_ECHO, HIGH);
     distance = (duration / 2) * 0.0344;
 
-#ifdef DEBUG
-#ifdef VERBOSE
+    #ifdef DEBUG
+    #ifdef VERBOSE
     Serial.print("[.] Distance (cm): ");
     Serial.println(distance);
-#endif
-#endif
+    #endif
+    #endif
 
     return round(distance);
 }

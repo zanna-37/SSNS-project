@@ -20,8 +20,8 @@ CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int
 bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
     bool isNeeded = false;
 
-#ifdef DEBUG
-#ifdef VERBOSE
+    #ifdef DEBUG
+    #ifdef VERBOSE
     Serial.print("[.] Timestamp: ");
     Serial.print(lastSend);
     Serial.print("-->");
@@ -29,16 +29,16 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
     Serial.print(" (diff ");
     Serial.print(abs(nowTimestamp - lastSend));
     Serial.println(")");
-#endif
-#endif
+    #endif
+    #endif
 
     if (lastSend == 0 || getTimestampDiff(nowTimestamp, lastSend) > KEEPALIVE_THREASHOLD_MS) {
-#ifdef DEBUG
+        #ifdef DEBUG
         Serial.print("[.] KeepAlive needed ");
         Serial.print(" (diff ");
         Serial.print(abs(nowTimestamp - lastSend));
         Serial.println(")");
-#endif
+        #endif
 
         isNeeded = true;
     }
@@ -48,9 +48,9 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
 
 void CommunicationManager::sendData(int ID, bool light, int distance, unsigned long nowTimestamp) {
     WakeXBee();
-#ifdef DEBUG
+    #ifdef DEBUG
     Serial.println("[.] Sending data...");
-#endif
+    #endif
 
     xBee->print("{");
     xBee->print(ID);

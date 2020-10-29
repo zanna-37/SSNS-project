@@ -35,7 +35,7 @@ CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE, KEEPALIV
 void setup() {
     Serial.begin(9600);
 
-#ifdef DEBUG
+    #ifdef DEBUG
     Serial.println();
     Serial.println("##############");
     Serial.println("#  STARTING  #");
@@ -50,7 +50,7 @@ void setup() {
     Serial.println("PIN_TRIG          : " + String(PIN_TRIG));
     Serial.println("PIN_ECHO          : " + String(PIN_ECHO));
     Serial.println("--------------");
-#endif
+    #endif
 
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(PIN_SENSORS_POWER, OUTPUT);
@@ -84,20 +84,20 @@ void loop() {
     unsigned long sleep_data = dataMngr.getMinDelayBeforAction(nowTimestamp);
     unsigned long sleep_time = min(sleep_comm, sleep_data);
 
-#ifdef DEBUG
-#ifdef VERBOSE
+    #ifdef DEBUG
+    #ifdef VERBOSE
     Serial.print("[.] sleep_comm: ");
     Serial.println(sleep_comm);
     Serial.print("[.] sleep_data: ");
     Serial.println(sleep_data);
-#endif
-#endif
+    #endif
+    #endif
 
-#ifdef DEBUG
+    #ifdef DEBUG
     Serial.print("[.] Zzz (");
     Serial.println(sleep_time);
     Serial.println(" ms)");
-#endif
+    #endif
 
     Serial.flush();
     sleepArduino(sleep_time);
@@ -107,11 +107,11 @@ unsigned long getElapsedRealTime() {
     return sleep.WDTMillis();
 }
 
-void wakeSensors(){
+void wakeSensors() {
     digitalWrite(PIN_SENSORS_POWER, HIGH);
     delay(100);
 }
-void sleepSensors(){
+void sleepSensors() {
     digitalWrite(PIN_SENSORS_POWER, LOW);
 }
 
