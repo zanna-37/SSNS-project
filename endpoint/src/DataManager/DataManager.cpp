@@ -5,11 +5,11 @@
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
 #define THRESHOLD_DIFF_DISTANCE 2
-#define SHORT_SLEEP 2000 //TODO make parameter //PRODUCTION: 10000
-#define DEFER_UNSTABLE_CHANGES_FOR_MS 10000 //TODO make parameter //PRODUCTION: 30000
-#define LONG_SLEEP 15000 //TODO make parameter //PRODUCTION: 60000
 
-DataManager::DataManager() {
+DataManager::DataManager(unsigned long SHORT_SLEEP, unsigned long DEFER_UNSTABLE_CHANGES_FOR_MS, unsigned long LONG_SLEEP) {
+    DataManager::SHORT_SLEEP = SHORT_SLEEP;
+    DataManager::DEFER_UNSTABLE_CHANGES_FOR_MS = DEFER_UNSTABLE_CHANGES_FOR_MS;
+    DataManager::LONG_SLEEP = LONG_SLEEP;
     lastLight = -1;
     lastDistance = -1;
     resetDefer();

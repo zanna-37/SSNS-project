@@ -5,11 +5,15 @@
 
 class DataManager {
 public:
-    DataManager();
+    DataManager(unsigned long SHORT_SLEEP, unsigned long DEFER_UNSTABLE_CHANGES_FOR_MS, unsigned long LONG_SLEEP);
     void resetIntemediateData(bool light, int distance, unsigned long nowTimestamp);
     bool addIntermediateAndCheckTransmissionNeeded(bool light, int distance, unsigned long nowTimestamp);
     unsigned long getMinDelayBeforAction(unsigned long nowTimestamp);
 private:
+    unsigned long SHORT_SLEEP;
+    unsigned long DEFER_UNSTABLE_CHANGES_FOR_MS;
+    unsigned long LONG_SLEEP;
+
     int lastLight;
     int lastDistance;
     unsigned long firstChange;

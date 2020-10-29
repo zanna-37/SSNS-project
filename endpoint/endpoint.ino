@@ -14,14 +14,22 @@
 #define PIN_TRIG 10
 #define PIN_ECHO 11
 
-#define KEEPALIVE_THREASHOLD_MS 10000
 #define ID_ENDPOINT 8 // CHANGE FOR EVERY DEVICE
+#define SHORT_SLEEP 2000 //PRODUCTION: 10000
+#define DEFER_UNSTABLE_CHANGES_FOR_MS 10000 //PRODUCTION: 30000
+#define LONG_SLEEP 15000 //PRODUCTION: 60000
+#define KEEPALIVE_THREASHOLD_MS 60000 //PRODUCTION: 1800000 (30min)
+
+static_assert(SHORT_SLEEP < DEFER_UNSTABLE_CHANGES_FOR_MS, "Assert SHORT_SLEEP < DEFER_UNSTABLE_CHANGES_FOR_MS failed");
+static_assert(DEFER_UNSTABLE_CHANGES_FOR_MS < LONG_SLEEP, "Assert DEFER_UNSTABLE_CHANGES_FOR_MS < LONG_SLEEP failed");
+static_assert(LONG_SLEEP < KEEPALIVE_THREASHOLD_MS, "Assert LONG_SLEEP < KEEPALIVE_THREASHOLD_MS failed");
 
 Sleep sleep;
 LightManager lightMngr(PIN_LIGHT);
 ProximityManager proximityMngr(PIN_TRIG, PIN_ECHO);
+DataManager dataMngr(SHORT_SLEEP, DEFER_UNSTABLE_CHANGES_FOR_MS, LONG_SLEEP);
 CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE, KEEPALIVE_THREASHOLD_MS);
-DataManager dataMngr;
+
 
 void setup() {
     Serial.begin(9600);
@@ -64,11 +72,11 @@ void loop() {
         dataMngr.resetIntemediateData(light, distance, nowTimestamp);
         commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
     }
-    
+
     nowTimestamp = getElapsedRealTime();
     unsigned long sleep_comm = commMngr.getMinDelayBeforAction(nowTimestamp);
     unsigned long sleep_data = dataMngr.getMinDelayBeforAction(nowTimestamp);
-    unsigned long sleep_time =  min(sleep_comm,sleep_data);
+    unsigned long sleep_time = min(sleep_comm, sleep_data);
 
 #ifdef DEBUG
 #ifdef VERBOSE
