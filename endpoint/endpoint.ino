@@ -9,6 +9,7 @@
 
 #define PIN_RX_XBEE 2
 #define PIN_TX_XBEE 3
+#define PIN_SENSORS_POWER 12
 #define PIN_SLEEP_XBEE 9
 #define PIN_LIGHT A5
 #define PIN_TRIG 10
@@ -40,24 +41,29 @@ void setup() {
     Serial.println("#  STARTING  #");
     Serial.println("##############");
     Serial.println();
-    Serial.print("TYPE           : ENDPOINT "); Serial.println(ID_ENDPOINT);
-    Serial.println("PIN_RX_XBEE    : " + String(PIN_RX_XBEE));
-    Serial.println("PIN_TX_XBEE    : " + String(PIN_TX_XBEE));
-    Serial.println("PIN_SLEEP_XBEE : " + String(PIN_SLEEP_XBEE));
-    Serial.println("PIN_LIGHT      : " + String(PIN_LIGHT));
-    Serial.println("PIN_TRIG       : " + String(PIN_TRIG));
-    Serial.println("PIN_ECHO       : " + String(PIN_ECHO));
+    Serial.print("TYPE              : ENDPOINT "); Serial.println(ID_ENDPOINT);
+    Serial.println("PIN_RX_XBEE       : " + String(PIN_RX_XBEE));
+    Serial.println("PIN_TX_XBEE       : " + String(PIN_TX_XBEE));
+    Serial.println("PIN_SENSORS_POWER : " + String(PIN_SENSORS_POWER));
+    Serial.println("PIN_SLEEP_XBEE    : " + String(PIN_SLEEP_XBEE));
+    Serial.println("PIN_LIGHT         : " + String(PIN_LIGHT));
+    Serial.println("PIN_TRIG          : " + String(PIN_TRIG));
+    Serial.println("PIN_ECHO          : " + String(PIN_ECHO));
     Serial.println("--------------");
 #endif
 
     pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(PIN_SENSORS_POWER, OUTPUT);
+
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop() {
+    wakeSensors();
     bool light = lightMngr.getLight();
     int distance = proximityMngr.getProximity();
     unsigned long nowTimestamp = getElapsedRealTime();
+    sleepSensors();
 
     bool sendData = false;
 
@@ -94,14 +100,22 @@ void loop() {
 #endif
 
     Serial.flush();
-    ArduinoSleep(sleep_time);
+    sleepArduino(sleep_time);
 }
 
 unsigned long getElapsedRealTime() {
     return sleep.WDTMillis();
 }
 
-void ArduinoSleep(int mills) {
+void wakeSensors(){
+    digitalWrite(PIN_SENSORS_POWER, HIGH);
+    delay(100);
+}
+void sleepSensors(){
+    digitalWrite(PIN_SENSORS_POWER, LOW);
+}
+
+void sleepArduino(int mills) {
     digitalWrite(LED_BUILTIN, LOW);
 
     sleep.pwrDownMode();
