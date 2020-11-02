@@ -52,16 +52,16 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
         if (abs(nowTimestamp - firstChange) > DEFER_UNSTABLE_CHANGES_FOR_MS) {
             //transmit if deferred-data timed out
             #ifdef DEBUG
-            Serial.print("[.] Defer timeout");
+            Serial.println("[.] Defer timeout");
             #endif
             return true;
         } else {
             //transmit if the deferred data become stable
             #ifdef DEBUG
             if (hasChanged) {
-                Serial.print("[.] Unstable change");
+                Serial.println("[.] Unstable change");
             } else {
-                Serial.print("[.] Stable change");
+                Serial.println("[.] Stable change");
             }
             #endif
             return !hasChanged;
@@ -69,7 +69,7 @@ bool DataManager::addIntermediateAndCheckTransmissionNeeded(bool light, int dist
     } else {
         if (hasChanged) {
             #ifdef DEBUG
-            Serial.print("[.] Defer transmission");
+            Serial.println("[.] Defer transmission");
             #endif
             deferTransmission(nowTimestamp);
         }

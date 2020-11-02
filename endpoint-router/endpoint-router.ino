@@ -15,21 +15,31 @@
 #define PIN_TRIG 10
 #define PIN_ECHO 11
 
-#define ID_ENDPOINT 8 // CHANGE FOR EVERY DEVICE
+#define NODE_ID 2 // CHANGE FOR EVERY DEVICE
+#define NODE_TYPE_ENDPOINT 0
+#define NODE_TYPE_ROUTER 1
+#define NODE_TYPE NODE_TYPE_ENDPOINT //possible values: NODE_TYPE_ENDPOINT || NODE_TYPE_ROUTER
 #define SHORT_SLEEP 2000 //PRODUCTION: 10000
-#define DEFER_UNSTABLE_CHANGES_FOR_MS 10000 //PRODUCTION: 30000
-#define LONG_SLEEP 15000 //PRODUCTION: 60000
+#define DEFER_UNSTABLE_CHANGES_FOR_MS 5000 //PRODUCTION: 30000
+#define LONG_SLEEP 8000 //PRODUCTION: 60000
 #define KEEPALIVE_THREASHOLD_MS 60000 //PRODUCTION: 1800000 (30min)
 
 static_assert(SHORT_SLEEP < DEFER_UNSTABLE_CHANGES_FOR_MS, "Assert SHORT_SLEEP < DEFER_UNSTABLE_CHANGES_FOR_MS failed");
 static_assert(DEFER_UNSTABLE_CHANGES_FOR_MS < LONG_SLEEP, "Assert DEFER_UNSTABLE_CHANGES_FOR_MS < LONG_SLEEP failed");
 static_assert(LONG_SLEEP < KEEPALIVE_THREASHOLD_MS, "Assert LONG_SLEEP < KEEPALIVE_THREASHOLD_MS failed");
+static_assert(NODE_TYPE == NODE_TYPE_ENDPOINT || NODE_TYPE == NODE_TYPE_ROUTER, "NODE_TYPE must be NODE_TYPE_ENDPOINT or NODE_TYPE_ROUTER");
 
 Sleep sleep;
 LightManager lightMngr(PIN_LIGHT);
 ProximityManager proximityMngr(PIN_TRIG, PIN_ECHO);
 DataManager dataMngr(SHORT_SLEEP, DEFER_UNSTABLE_CHANGES_FOR_MS, LONG_SLEEP);
-CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE, KEEPALIVE_THREASHOLD_MS);
+CommunicationManager commMngr(PIN_RX_XBEE, PIN_TX_XBEE, PIN_SLEEP_XBEE, KEEPALIVE_THREASHOLD_MS,
+    #if NODE_TYPE == NODE_TYPE_ROUTER
+    true
+    #elif NODE_TYPE == NODE_TYPE_ENDPOINT
+    false
+    #endif
+);
 
 
 void setup() {
@@ -41,7 +51,13 @@ void setup() {
     Serial.println("#  STARTING  #");
     Serial.println("##############");
     Serial.println();
-    Serial.print("TYPE              : ENDPOINT "); Serial.println(ID_ENDPOINT);
+    Serial.print("TYPE              : ");
+    #if NODE_TYPE == NODE_TYPE_ROUTER
+    Serial.println("ROUTER");
+    #elif NODE_TYPE == NODE_TYPE_ENDPOINT
+    Serial.println("ENDPOINT");
+    #endif
+    Serial.print("NODE_ID           : "); Serial.println(NODE_ID);
     Serial.println("PIN_RX_XBEE       : " + String(PIN_RX_XBEE));
     Serial.println("PIN_TX_XBEE       : " + String(PIN_TX_XBEE));
     Serial.println("PIN_SENSORS_POWER : " + String(PIN_SENSORS_POWER));
@@ -76,7 +92,7 @@ void loop() {
 
     if (sendData) {
         dataMngr.resetIntemediateData(light, distance, nowTimestamp);
-        commMngr.sendData(ID_ENDPOINT, light, distance, nowTimestamp);
+        commMngr.sendData(NODE_ID, light, distance, nowTimestamp);
     }
 
     nowTimestamp = getElapsedRealTime();
@@ -95,8 +111,9 @@ void loop() {
 
     #ifdef DEBUG
     Serial.print("[.] Zzz (");
-    Serial.println(sleep_time);
+    Serial.print(sleep_time);
     Serial.println(" ms)");
+    Serial.println();
     #endif
 
     Serial.flush();
@@ -123,7 +140,3 @@ void sleepArduino(int mills) {
 
     digitalWrite(LED_BUILTIN, HIGH);
 }
-
-
-
-

@@ -5,11 +5,11 @@
 
 #define SLEEP_MS 10
 
-SoftwareSerial XBee(2, 3); // RX, TX
+SoftwareSerial xBee(2, 3); // RX, TX
 
 void setup() {
     Serial.begin(9600, SERIAL_8E1);
-    XBee.begin(9600);
+    xBee.begin(9600);
 
     #ifdef DEBUG
     Serial.println();
@@ -29,7 +29,7 @@ void loop() {
     String message = "";
 
     while (bytesAvailable() > 0) {
-        String message = XBee.readStringUntil('\n'); //buffer is 64bytes, do not send a longer message without a \n in the middle
+        String message = xBee.readStringUntil('\n'); //buffer is 64bytes, do not send a longer message without a \n in the middle
         #ifdef DEBUG
         Serial.print("[.] Received: ");
         #endif
@@ -48,7 +48,7 @@ void loop() {
 }
 
 int bytesAvailable() {
-    int byteToRead = XBee.available();
+    int byteToRead = xBee.available();
 
     #ifdef DEBUG
     if (byteToRead > 0) {

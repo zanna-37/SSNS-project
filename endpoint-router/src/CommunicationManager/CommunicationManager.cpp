@@ -6,9 +6,10 @@
 #define DEBUG //comment: off | uncomment: on
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
 
-CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int PIN_SLEEP_XBEE, unsigned long KEEPALIVE_THREASHOLD_MS) {
+CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int PIN_SLEEP_XBEE, unsigned long KEEPALIVE_THREASHOLD_MS, bool isRouter) {
     CommunicationManager::PIN_SLEEP_XBEE = PIN_SLEEP_XBEE;
     CommunicationManager::KEEPALIVE_THREASHOLD_MS = KEEPALIVE_THREASHOLD_MS;
+    CommunicationManager::isRouter = isRouter;
     lastSend = 0;
 
     xBee = new SoftwareSerial(PIN_RX_XBEE, PIN_TX_XBEE); // RX, TX
@@ -47,7 +48,7 @@ bool CommunicationManager::isKeepAliveNeeded(unsigned long nowTimestamp) {
 }
 
 void CommunicationManager::sendData(int ID, bool light, int distance, unsigned long nowTimestamp) {
-    WakeXBee();
+    wakeXBeeIfNeeded();
     #ifdef DEBUG
     Serial.println("[.] Sending data...");
     #endif
@@ -61,7 +62,7 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     xBee->println("}");
 
     xBee->flush();
-    SleepXBee();
+    sleepXBeeIfNeeded();
 
     lastSend = nowTimestamp;
 }
@@ -73,12 +74,14 @@ unsigned long CommunicationManager::getMinDelayBeforeAction(unsigned long nowTim
     );
 }
 
-void CommunicationManager::WakeXBee() {
+void CommunicationManager::wakeXBeeIfNeeded() {
+    if (isRouter) { return; }
     digitalWrite(PIN_SLEEP_XBEE, LOW);
     delay(100); //wait for the XBee to wake up
 }
 
-void CommunicationManager::SleepXBee() {
+void CommunicationManager::sleepXBeeIfNeeded() {
+    if (isRouter) { return; }
     digitalWrite(PIN_SLEEP_XBEE, HIGH);
 }
 
