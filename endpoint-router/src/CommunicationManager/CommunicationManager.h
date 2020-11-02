@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include <SoftwareSerial.h>
+#include "xbee-arduino-master/XBee.h"
 
 class CommunicationManager {
 public:
@@ -13,7 +14,10 @@ public:
     unsigned long getMinDelayBeforeAction(unsigned long nowTimestamp);
 
 private:
-    SoftwareSerial* xBee;
+    SoftwareSerial* xBeeSerial;
+    XBee* xBee;
+    XBeeAddress64 address;
+
     int PIN_SLEEP_XBEE;
     unsigned long KEEPALIVE_THREASHOLD_MS;
     bool isRouter;

@@ -58,6 +58,7 @@ void setup() {
     Serial.println("ENDPOINT");
     #endif
     Serial.print("NODE_ID           : "); Serial.println(NODE_ID);
+    Serial.println();
     Serial.println("PIN_RX_XBEE       : " + String(PIN_RX_XBEE));
     Serial.println("PIN_TX_XBEE       : " + String(PIN_TX_XBEE));
     Serial.println("PIN_SENSORS_POWER : " + String(PIN_SENSORS_POWER));

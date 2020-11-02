@@ -1,7 +1,9 @@
 #include "CommunicationManager.h"
 #include "Arduino.h"
 #include <Math.h>
+#include <String.h>
 #include <SoftwareSerial.h>
+#include "xBee-arduino-master/XBee.h"
 
 #define DEBUG //comment: off | uncomment: on
 //#define VERBOSE //Only works with DEBUG set | comment: off | uncomment: on
@@ -12,8 +14,13 @@ CommunicationManager::CommunicationManager(int PIN_RX_XBEE, int PIN_TX_XBEE, int
     CommunicationManager::isRouter = isRouter;
     lastSend = 0;
 
-    xBee = new SoftwareSerial(PIN_RX_XBEE, PIN_TX_XBEE); // RX, TX
-    xBee->begin(9600);
+    address = XBeeAddress64(0x0, 0x0);
+
+    xBeeSerial = new SoftwareSerial(PIN_RX_XBEE, PIN_TX_XBEE); // RX, TX
+    xBeeSerial->begin(9600);
+
+    xBee = new XBee;
+    xBee->setSerial(*xBeeSerial);
 
     pinMode(PIN_SLEEP_XBEE, OUTPUT);
 }
@@ -53,7 +60,76 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     Serial.println("[.] Sending data...");
     #endif
 
-    xBee->print("{");
+    String payload_str = "";
+    payload_str += "{";
+    payload_str += ID;
+    payload_str += ",";
+    payload_str += light;
+    payload_str += ",";
+    payload_str += distance;
+    payload_str += "}";
+
+    uint8_t* payload;
+    int payload_length = payload_str.length();
+    payload = new uint8_t(payload_length);
+    for (int i = 0; i < payload_length; i++) {
+        payload[i] = (uint8_t)payload_str[i];
+    }
+
+    #ifdef DEBUG
+    #ifdef VERBOSE
+    for (int i = 0; i < payload_length; i++) {
+        Serial.print((char)payload[i]);
+    }
+    Serial.println();
+    #endif
+    #endif
+
+    ZBTxRequest req = ZBTxRequest(address, payload, payload_length);
+    ZBTxStatusResponse txStatus = ZBTxStatusResponse();
+
+    xBee->send(req);
+    if (xBee->readPacket(500)) {
+        // got a response!
+
+        // should be a znet tx status
+        if (xBee->getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+            xBee->getResponse().getZBTxStatusResponse(txStatus);
+
+            // get the delivery status, the fifth byte
+
+            if (txStatus.getDeliveryStatus() == SUCCESS) {
+                #ifdef DEBUG
+                Serial.println("[+] Transmission succeed");
+                #endif
+            } else {
+                // the remote XBee did not receive our packet. is it powered on?
+                #ifdef DEBUG
+                Serial.print("[!] Transmission failed: 0x");
+                Serial.println(txStatus.getDeliveryStatus(), HEX);
+                #endif
+            }
+        } else {
+            #ifdef DEBUG
+            Serial.print("[!] Wrong API Id: 0x");
+            Serial.println(xBee->getResponse().getApiId());
+            #endif
+        }
+    } else if (xBee->getResponse().isError()) {
+        #ifdef DEBUG
+        Serial.print("[-] Transmission error: ");
+        Serial.println(xBee->getResponse().getErrorCode());
+        #endif
+    } else {
+        // local XBee did not provide a timely TX Status Response -- should not happen
+        #ifdef DEBUG
+        Serial.println("[-] Transmission error");
+        Serial.println(" |-> did you enable AP: API 2 with escaping?");
+        Serial.println(" |-> otherwise likely hardware related");
+        #endif
+    }
+
+    /*xBee->print("{");
     xBee->print(ID);
     xBee->print(",");
     xBee->print(light);
@@ -61,7 +137,7 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     xBee->print(distance);
     xBee->println("}");
 
-    xBee->flush();
+    xBee->flush();*/
     sleepXBeeIfNeeded();
 
     lastSend = nowTimestamp;
@@ -77,7 +153,7 @@ unsigned long CommunicationManager::getMinDelayBeforeAction(unsigned long nowTim
 void CommunicationManager::wakeXBeeIfNeeded() {
     if (isRouter) { return; }
     digitalWrite(PIN_SLEEP_XBEE, LOW);
-    delay(100); //wait for the XBee to wake up
+    delay(200); //wait for the XBee to wake up
 }
 
 void CommunicationManager::sleepXBeeIfNeeded() {
