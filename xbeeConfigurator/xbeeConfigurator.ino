@@ -18,6 +18,8 @@
 #define PIN_SLEEP_XBEE 9
 
 enum at_command_codes {
+    AT_RE, //reset xBee
+    //AT_WR,  //TODO DEL ME
     AT_ID,
     AT_CE,
     AT_NI,
@@ -27,7 +29,7 @@ enum at_command_codes {
     AT_KY,
     AT_AP,
     AT_SM,
-    AT_WR
+    AT_WR  //write changes to persistent xBee
 };
 
 static_assert(
@@ -162,6 +164,11 @@ void sendAtCommand(AtCommandRequest& atRequest, AtCommandResponse& atResponse) {
 
 void buildAtCommand(at_command_codes at_cmd_code, uint8_t* at_Cmd, uint8_t* at_Value, int& at_Value_length, const int MAX_VALUE_LENGHT) {
     switch (at_cmd_code) {
+    case(AT_RE): {
+        at_Cmd[0] = 'R'; at_Cmd[1] = 'E';
+        at_Value_length = 0;
+        break;
+    }
     case(AT_ID): {
         at_Cmd[0] = 'I'; at_Cmd[1] = 'D';
         at_Value_length = 2;
