@@ -123,9 +123,9 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     } else {
         // local XBee did not provide a timely TX Status Response -- should not happen
         #ifdef DEBUG
-        Serial.println("[-] Transmission error");
+        Serial.println("[-] No radio response");
         Serial.println(" |-> did you enable AP: API 2 with escaping?");
-        Serial.println(" |-> otherwise likely hardware related");
+        Serial.println(" |-> otherwise the error is likely hardware related");
         #endif
     }
 
