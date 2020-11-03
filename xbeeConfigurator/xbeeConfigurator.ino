@@ -201,7 +201,7 @@ void buildAtCommand(at_command_codes at_cmd_code, uint8_t* at_Cmd, uint8_t* at_V
         if (NODE_TYPE == NODE_TYPE_ENDPOINT) {
             at_Value[0] = 'E';
         } else if (NODE_TYPE == NODE_TYPE_ROUTER) {
-            at_Value[0] = 'E';
+            at_Value[0] = 'R';
         } else if (NODE_TYPE == NODE_TYPE_COORDINATOR) {
             at_Value[0] = 'C';
         } else {
