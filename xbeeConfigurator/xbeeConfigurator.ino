@@ -23,7 +23,6 @@ enum at_command_codes {
     AT_ID,
     AT_CE,
     AT_NI,
-    AT_TO,
     AT_EE,
     AT_EO,
     AT_KY,
@@ -216,12 +215,6 @@ void buildAtCommand(at_command_codes at_cmd_code, uint8_t* at_Cmd, uint8_t* at_V
         for (int i = 0; i < node_id_str.length(); i++) {
             at_Value[2 + i] = node_id_str[i];
         }
-        break;
-    }
-    case(AT_TO): {
-        at_Cmd[0] = 'T'; at_Cmd[1] = 'O';
-        at_Value_length = 1;
-        at_Value[0] = 0x20;
         break;
     }
     case(AT_EE): {

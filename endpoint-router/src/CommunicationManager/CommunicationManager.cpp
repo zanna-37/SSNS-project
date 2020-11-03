@@ -86,6 +86,7 @@ void CommunicationManager::sendData(int ID, bool light, int distance, unsigned l
     #endif
 
     ZBTxRequest req = ZBTxRequest(address, payload, payload_length);
+    req.setOption(0x20);
     ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 
     xBee->send(req);
