@@ -19,15 +19,14 @@
 
 enum at_command_codes {
     AT_RE, //reset xBee
-    //AT_WR,  //TODO DEL ME
     AT_ID,
+    AT_SM, //put before AT_CE
     AT_CE,
     AT_NI,
     AT_EE,
     AT_EO,
     AT_KY,
-    AT_AP,
-    AT_SM,
+    AT_AP,    
     AT_WR  //write changes to persistent xBee
 };
 
