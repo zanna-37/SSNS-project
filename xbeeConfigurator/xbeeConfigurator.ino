@@ -7,11 +7,11 @@
 #define makeValueToString(x) makestring(x)
 #define makestring(x) #x
 
-#define NODE_ID 2 // CHANGE FOR EVERY DEVICE
+#define NODE_ID 1 // CHANGE FOR EVERY DEVICE
 #define NODE_TYPE_ENDPOINT 0
 #define NODE_TYPE_ROUTER 1
 #define NODE_TYPE_COORDINATOR 2
-#define NODE_TYPE NODE_TYPE_COORDINATOR //possible values: NODE_TYPE_ENDPOINT || NODE_TYPE_ROUTER || NODE_TYPE_COORDINATOR
+#define NODE_TYPE NODE_TYPE_ROUTER //possible values: NODE_TYPE_ENDPOINT || NODE_TYPE_ROUTER || NODE_TYPE_COORDINATOR
 
 #define PIN_RX_XBEE 2
 #define PIN_TX_XBEE 3
